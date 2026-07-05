@@ -1,0 +1,40 @@
+modules:
+  function:
+    - key: lookup-resolver
+      handler: resolvers/index.handler
+  macro:
+    - key: lookup-table-macro
+      resource: lookupTable
+      render: native
+      config: true
+      resolver:
+        function: lookup-resolver
+      title: LookupTable
+      description: Define a key-value store on a page, that can later on be used for value look-ups by the LookupKey macro.
+    - key: lookup-key-macro
+      resource: lookupKey
+      render: native
+      layout: inline
+      config: true
+      resolver:
+        function: lookup-resolver
+      title: LookupKey
+      description: Lookup a value from a given KV-store as defined by the referenced LookupTable macro.
+
+permissions:
+  scopes:
+    - read:page:confluence
+    - write:page:confluence
+    - read:confluence-props
+    - write:confluence-props
+
+app:
+  runtime:
+    name: nodejs24.x
+  id: ari:cloud:ecosystem::app/ce4129d7-9b90-44b5-bbcb-abf728f4b6ea
+
+resources:
+  - key: lookupTable
+    path: src/lookupTable/index.jsx
+  - key: lookupKey
+    path: src/lookupKey/index.jsx

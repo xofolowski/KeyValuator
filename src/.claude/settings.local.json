@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/xof/playground/Projects/AtlassianForge/KVlookup2/**)",
+      "Bash(forge deploy *)",
+      "Bash(forge logs *)",
+      "Bash(forge lint *)",
+      "WebFetch(domain:developer.atlassian.com)"
+    ]
+  }
+}
