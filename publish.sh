@@ -113,10 +113,10 @@ info "Creating release branch..."
 git checkout -b "$RELEASE_BRANCH" --quiet
 
 info "Stripping private files (.claude)..."
-git rm --cached -r .claude --quiet
+git rm --cached -r .claude .env publish.sh appid.txt CLAUDE.md  --quiet
 git commit -m "chore: prepare public release ${NEW_TAG}
 
-Strips .claude (private project files) before publishing." --quiet
+Strips private project files before publishing." --quiet
 
 # ── Push to public repo ───────────────────────────────────────────────────────
 info "Pushing to ${PUBLIC_REPO}..."
