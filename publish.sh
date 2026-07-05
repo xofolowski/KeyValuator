@@ -4,7 +4,8 @@
 # What this script does:
 #   1. Determines the next version tag (major or minor) based on the latest tag.
 #   2. Collects release notes from the terminal.
-#   3. Creates a throwaway branch from main, strips files listed in .publishignore,
+#   3. Merges development into main and pushes it to the private remote.
+#   4. Creates a throwaway branch from main, strips files listed in .publishignore,
 #      and force-pushes it to the public remote as main.
 #   4. Creates a GitHub Release on the public repo with the new tag and notes.
 #   5. Tags the private repo's main for internal version tracking.
@@ -102,11 +103,13 @@ read -rp "  Publish to https://github.com/${PUBLIC_REPO}? [y/N] " CONFIRM
 # ── Remember current branch so we can return to it ───────────────────────────
 ORIGINAL_BRANCH=$(git symbolic-ref --short HEAD)
 
-# ── Ensure main is current ────────────────────────────────────────────────────
+# ── Merge development into main ───────────────────────────────────────────────
 echo ""
-info "Updating main from ${PRIVATE_REMOTE}..."
+info "Merging development into main..."
 git checkout main --quiet
 git pull "$PRIVATE_REMOTE" main --quiet
+git merge development --no-edit --quiet
+git push "$PRIVATE_REMOTE" main --quiet
 
 # ── Build the stripped release branch ────────────────────────────────────────
 info "Creating release branch..."
