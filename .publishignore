@@ -5,3 +5,4 @@
 publish.sh
 appid.txt
 CLAUDE.md
+.publishignore
