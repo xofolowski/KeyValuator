@@ -33,9 +33,31 @@ All data access goes through a Forge backend resolver using the Confluence REST 
 
 ## Prerequisites
 
-- Node.js 18 or later
-- [Forge CLI](https://developer.atlassian.com/platform/forge/getting-started/) installed and logged in (`forge login`)
-- Confluence Cloud site with admin access for installation
+- **Node.js 18 or later** — [nodejs.org](https://nodejs.org)
+- **Forge CLI** — `npm install -g @forge/cli`
+- **Confluence Cloud site** with admin access for installation
+- **Atlassian API token** — needed once to authenticate the Forge CLI (see below)
+
+### Atlassian API Token
+
+The Forge CLI authenticates with your Atlassian account to deploy and manage the app. It does **not** require a separate Confluence-specific token — one Atlassian API token covers everything.
+
+**Create a token:**
+
+1. Go to [id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens)
+2. Click **Create API token**, give it a label (e.g. `forge-cli`), and copy the value
+
+**Log in to the Forge CLI** (once per machine):
+
+```bash
+forge login
+```
+
+You will be prompted for:
+- Your Atlassian account **email address**
+- The **API token** you just created
+
+Credentials are stored in `~/.forge/` on your machine. You do not need to repeat this unless you log out or switch accounts. No API token is needed at runtime — the app authenticates as itself via the Forge platform.
 
 ---
 
