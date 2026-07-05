@@ -156,7 +156,9 @@ gh release create "$NEW_TAG" \
 
 # ── Tag the private repo's main for internal version tracking ─────────────────
 info "Tagging private repo..."
-git checkout main --quiet
+# -f required: git rm --cached left stripped files as untracked on _release.
+# Without -f, git refuses to overwrite them when switching back to main.
+git checkout -f main --quiet
 git tag "$NEW_TAG" -m "Release ${NEW_TAG}"
 git push "$PRIVATE_REMOTE" "$NEW_TAG" --quiet
 
