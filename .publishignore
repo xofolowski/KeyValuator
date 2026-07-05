@@ -1,8 +1,0 @@
-# Files and directories stripped from the public release.
-# One entry per line. Lines starting with # are ignored.
-.claude
-.env
-publish.sh
-appid.txt
-CLAUDE.md
-.publishignore
