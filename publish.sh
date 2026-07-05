@@ -4,7 +4,7 @@
 # What this script does:
 #   1. Determines the next version tag (major or minor) based on the latest tag.
 #   2. Collects release notes from the terminal.
-#   3. Creates a throwaway branch from main, strips .claude (private files),
+#   3. Creates a throwaway branch from main, strips files listed in .publishignore,
 #      and force-pushes it to the public remote as main.
 #   4. Creates a GitHub Release on the public repo with the new tag and notes.
 #   5. Tags the private repo's main for internal version tracking.
@@ -112,11 +112,32 @@ git pull "$PRIVATE_REMOTE" main --quiet
 info "Creating release branch..."
 git checkout -b "$RELEASE_BRANCH" --quiet
 
-info "Stripping private files (.claude)..."
-git rm --cached -r .claude .env publish.sh appid.txt CLAUDE.md  --quiet
+info "Reading .publishignore..."
+[[ -f .publishignore ]] || abort ".publishignore not found. Cannot determine which files to strip."
+
+# Build the list of tracked entries to remove from the release.
+# Skips blank lines, comment lines, and any entry not currently tracked by git.
+STRIP=()
+while IFS= read -r entry || [[ -n "$entry" ]]; do
+  # Strip leading/trailing whitespace, skip blanks and comments.
+  entry="${entry#"${entry%%[![:space:]]*}"}"
+  entry="${entry%"${entry##*[![:space:]]}"}"
+  [[ -z "$entry" || "$entry" == \#* ]] && continue
+  # Only include entries that are actually tracked in the index.
+  if git ls-files --error-unmatch "$entry" >/dev/null 2>&1; then
+    STRIP+=("$entry")
+  else
+    echo -e "  ${CYAN}(skipping '${entry}' — not tracked in git)${RESET}"
+  fi
+done < .publishignore
+
+[[ ${#STRIP[@]} -gt 0 ]] || abort "No tracked files matched .publishignore entries. Aborting."
+
+info "Stripping: ${STRIP[*]}"
+git rm --cached -r "${STRIP[@]}" --quiet
 git commit -m "chore: prepare public release ${NEW_TAG}
 
-Strips private project files before publishing." --quiet
+Strips private project files (see .publishignore) before publishing." --quiet
 
 # ── Push to public repo ───────────────────────────────────────────────────────
 info "Pushing to ${PUBLIC_REPO}..."
